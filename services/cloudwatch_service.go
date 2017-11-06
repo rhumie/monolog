@@ -3,6 +3,8 @@ package services
 import (
 	"strings"
 
+	"golang.org/x/sync/errgroup"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -134,12 +136,23 @@ func (s *CloudwatchService) SearchLogs(req *SearchLogRequest) (*SearchLogRespons
 		return nil, err
 	}
 	// Search Log Streams.
+	eg := errgroup.Group{}
 	for _, v := range resLogGroups {
-		v.LogStreams, err = s.searchLogStreams(client, v.Name)
-		if err != nil {
-			return nil, err
-		}
+		name := v.Name
+		streams := &v.LogStreams
+		eg.Go(func() error {
+			*streams, err = s.searchLogStreams(client, name)
+			if err != nil {
+				return err
+			}
+			return nil
+		})
 	}
+
+	if err := eg.Wait(); err != nil {
+		return nil, err
+	}
+
 	// Create response.
 	res := &SearchLogResponse{
 		LogGroups: resLogGroups,

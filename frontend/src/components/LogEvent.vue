@@ -61,11 +61,14 @@ export default {
       nextBackwardToken: '',
       nextForwardToken: '',
       currentScrollTop: 0,
-      isLoading: true
+      isLoading: false
     }
   },
   methods: {
     async getLogEvents (customParams = {}) {
+      if (this.isLoading) {
+        return
+      }
       this.isLoading = true
       const { res, error } = await axios.get('/api/logevents', {
         headers: {
@@ -86,6 +89,7 @@ export default {
           this.$router.push('/login')
         }
       }
+
       switch (customParams.nextToken) {
         // Scroll down.
         case this.nextForwardToken:
