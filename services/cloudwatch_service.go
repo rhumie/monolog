@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -36,7 +35,8 @@ func (s *CloudwatchService) searchLogEvents(client *cloudwatchlogs.CloudWatchLog
 	input := new(cloudwatchlogs.GetLogEventsInput).
 		SetLogGroupName(req.LogGroupName).
 		SetLogStreamName(req.LogStreamName).
-		SetStartFromHead(req.StartFromHead)
+		SetStartFromHead(req.StartFromHead).
+		SetLimit(100)
 	if req.NextToken != "" {
 		input.SetNextToken(req.NextToken)
 	}
@@ -46,7 +46,7 @@ func (s *CloudwatchService) searchLogEvents(client *cloudwatchlogs.CloudWatchLog
 	if req.EndTime != 0 {
 		input.SetEndTime(req.EndTime)
 	}
-	fmt.Println(input)
+
 	// Execute API.
 	o, err := client.GetLogEvents(input)
 	if err != nil {
@@ -83,7 +83,8 @@ func (s *CloudwatchService) searchLogEventsWithFilter(client *cloudwatchlogs.Clo
 	input := new(cloudwatchlogs.FilterLogEventsInput).
 		SetLogGroupName(req.LogGroupName).
 		SetLogStreamNames([]*string{&req.LogStreamName}).
-		SetFilterPattern(req.FilterPattern)
+		SetFilterPattern(req.FilterPattern).
+		SetLimit(100)
 	if req.NextToken != "" {
 		input.SetNextToken(req.NextToken)
 	}

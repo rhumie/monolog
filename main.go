@@ -5,8 +5,10 @@ import (
 	"strconv"
 	"strings"
 
+	static "github.com/Code-Hex/echo-static"
 	"github.com/datake914/monolog/controllers"
 	"github.com/datake914/monolog/services"
+	assetfs "github.com/elazarl/go-bindata-assetfs"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
@@ -21,11 +23,17 @@ func main() {
 	e := echo.New()
 
 	e.Use(middleware.CORS())
+	e.Use(static.ServeRoot("/", NewAssets("frontend/dist")))
+	e.Use(static.ServeRoot("/login", NewAssets("frontend/dist")))
+	e.Use(static.ServeRoot("/js", NewAssets("frontend/dist/static/js")))
+	e.Use(static.ServeRoot("/css", NewAssets("frontend/dist/static/css")))
+	e.Use(static.ServeRoot("/fonts", NewAssets("frontend/dist/static/fonts")))
+
 	e.Binder = &CustomBinder{}
 
 	s := createLogService(opts.Service())
-	e.GET("/logs", controllers.NewLogController(s).Index)
-	e.GET("/logevents", controllers.NewLogEventController(s).Index)
+	e.GET("/api/logs", controllers.NewLogController(s).Index)
+	e.GET("/api/logevents", controllers.NewLogEventController(s).Index)
 
 	e.Logger.Fatal(e.Start(":" + strconv.Itoa(opts.Port())))
 }
@@ -54,4 +62,13 @@ func (cb *CustomBinder) Bind(i interface{}, c echo.Context) (err error) {
 		f.Set(reflect.ValueOf(token[1]))
 	}
 	return nil
+}
+
+func NewAssets(root string) *assetfs.AssetFS {
+	return &assetfs.AssetFS{
+		Asset:     Asset,
+		AssetDir:  AssetDir,
+		AssetInfo: AssetInfo,
+		Prefix:    root,
+	}
 }

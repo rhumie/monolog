@@ -17,19 +17,11 @@
         </div>
       </div>
       <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-3 mdc-layout-grid__cell--span-4-tablet">
-        <select-menu-aws-region
-          id="select-menu-aws-region"
-          :defaultRegion="this.searchAWSRegion"
-          :fullwidth="true"
-          @change="doChangeAWSRegionEvent">
+        <select-menu-aws-region id="select-menu-aws-region" :defaultRegion="this.searchAWSRegion" :fullwidth="true" @change="doChangeAWSRegionEvent">
         </select-menu-aws-region>
       </div>
       <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-3 mdc-layout-grid__cell--span-4-tablet">
-        <date-time-picker v-model="searchDateFrom"
-          id="search-from-date"
-          label="Last Timestamp later than"
-          :editable="false"
-          :clearable="true">
+        <date-time-picker v-model="searchDateFrom" id="search-from-date" label="Last Timestamp later than" :editable="false" :clearable="true">
         </date-time-picker>
       </div>
     </div>
@@ -40,7 +32,7 @@
       <ul class="mdc-list mdc-list--dense">
         <li class="mdc-list-item" v-for="logStream in logGroup.filteredLogStreams">
           <div class="mdc-checkbox mdc-list-item__start-detail">
-            <input type="checkbox" :id="logStream.id" class="mdc-checkbox__native-control" :value="createValue(logGroup, logStream)" v-model="selectedLogStreams"/>
+            <input type="checkbox" :id="logStream.id" class="mdc-checkbox__native-control" :value="createValue(logGroup, logStream)" v-model="selectedLogStreams" />
             <div class="mdc-checkbox__background">
               <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
                   <path class="mdc-checkbox__checkmark__path" fill="none" stroke="white" d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
@@ -51,7 +43,7 @@
           <label v-bind:for="logStream.id">
               <span class="mdc-list-item__text">{{ logStream.name }}<span class="mdc-list-item__text__secondary">{{ dateToString(logStream.lastEventTimestamp) }}</span></span>
           </label>
-          <button class="mdc-button mdc-button--dense mdc-list-item__end-detail "><i class="material-icons ">get_app</i></button>
+          <!-- <button class="mdc-button mdc-button--dense mdc-list-item__end-detail "><i class="material-icons ">get_app</i></button> -->
         </li>
       </ul>
       <hr class="mdc-list-divider">
@@ -102,7 +94,7 @@ export default {
   methods: {
     async searchLogs () {
       this.isLoading = true
-      const {res, error} = await axios.get('http://localhost:8000/logs', {
+      const { res, error } = await axios.get('/api/logs', {
         headers: {
           'X-ServiceToken': `Logs ${localStorage.getItem('token') || ''}`
         },
@@ -168,15 +160,11 @@ export default {
   },
   watch: {
     selectedLogStreams: function () {
-      if (this.selectedLogStreams.length > 10) {
-      }
+      if (this.selectedLogStreams.length > 10) {}
       this.$emit('selectLogStream', this.selectedLogStreams.map(elem => JSON.parse(elem)))
     },
     searchAWSRegion: function () {
       this.$emit('changeAWSRegion', this.searchAWSRegion)
-    },
-    searchDateFrom: function () {
-      console.log(this.searchDateFrom.getTime())
     }
   },
   created () {

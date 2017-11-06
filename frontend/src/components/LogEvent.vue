@@ -1,18 +1,18 @@
 <template>
 <div>
+  <div role="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate" v-show="isLoading">
+    <div class="mdc-linear-progress__buffering-dots"></div>
+    <div class="mdc-linear-progress__buffer"></div>
+    <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+      <span class="mdc-linear-progress__bar-inner"></span>
+    </div>
+    <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+      <span class="mdc-linear-progress__bar-inner"></span>
+    </div>
+  </div>
   <div class="scroll-area" @scroll="scroll">
     <div v-for="event in events" class="row">
       <span class="column" v-show="displayTimestamp">{{ dateToString(event.timestamp) }}</span><span class="column">{{event.message}}</span>
-    </div>
-    <div role="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate" v-show="isLoading">
-      <div class="mdc-linear-progress__buffering-dots"></div>
-      <div class="mdc-linear-progress__buffer"></div>
-      <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
-        <span class="mdc-linear-progress__bar-inner"></span>
-      </div>
-      <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
-        <span class="mdc-linear-progress__bar-inner"></span>
-      </div>
     </div>
   </div>
 </div>
@@ -67,7 +67,7 @@ export default {
   methods: {
     async getLogEvents (customParams = {}) {
       this.isLoading = true
-      const {res, error} = await axios.get('http://localhost:8000/logevents', {
+      const { res, error } = await axios.get('/api/logevents', {
         headers: {
           'X-ServiceToken': `Logs ${localStorage.getItem('token') || ''}`
         },
@@ -81,7 +81,6 @@ export default {
           endTime: this.endTime ? this.endTime.getTime() : 0
         }, customParams)
       })
-      console.log(res)
       if (error) {
         if (error.status === 401) {
           this.$router.push('/login')
@@ -93,12 +92,12 @@ export default {
           this.nextForwardToken = res.data.data.nextForwardToken
           this.events = [...this.events, ...res.data.data.logEvents]
           break
-          // Scroll up.
+        // Scroll up.
         case this.nextBackwardToken:
           this.nextBackwardToken = res.data.data.nextBackwardToken
           this.events = [...res.data.data.logEvents, ...this.events]
           break
-          // Initial
+         // Initial
         default:
           this.nextBackwardToken = res.data.data.nextBackwardToken
           this.nextForwardToken = res.data.data.nextForwardToken
@@ -152,6 +151,10 @@ export default {
       this.nextForwardToken = ''
       this.nextBackwardToken = ''
     },
+    scrollTop () {
+      const scroll = this.$el.querySelector('.scroll-area')
+      scroll.scrollTop = 0
+    },
     scrollBottom () {
       const scroll = this.$el.querySelector('.scroll-area')
       scroll.scrollTop = scroll.scrollHeight
@@ -159,7 +162,11 @@ export default {
     async initialize () {
       this.clear()
       await this.getLogEvents()
-      this.scrollBottom()
+      if (this.startFromHead) {
+        this.scrollTop()
+      } else {
+        this.scrollBottom()
+      }
     }
   },
   watch: {

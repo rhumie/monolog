@@ -62,7 +62,7 @@ export default {
         secretAccessKey: this.secret
       }))
       var self = this
-      sts.getSessionToken({DurationSeconds: 900}, (err, data) => {
+      sts.getSessionToken({DurationSeconds: 3600}, (err, data) => {
         if (err) {
           self.hasError = true
           this.isLoading = false

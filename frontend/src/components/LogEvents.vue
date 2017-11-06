@@ -4,7 +4,7 @@
     <div class="mdc-layout-grid__inner">
       <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 mdc-layout-grid__cell--span-8-tablet">
         <div class="mdc-textfield mdc-textfield--fullwidth">
-          <input type="text" id="search-string-textfield" class="mdc-textfield__input" pattern="hoge" v-model.lazy="searchString">
+          <input type="text" id="search-string-textfield" class="mdc-textfield__input" v-model.lazy="searchString">
           <label class="mdc-textfield__label" for="search-string-textfield">Search String</label>
           <div class="mdc-textfield__bottom-line"></div>
         </div>
@@ -67,10 +67,10 @@
         <i class="mdc-icon-toggle material-icons" role="button" :aria-pressed="searchFromHead"
           :class="{'mdc-icon-toggle--disabled':searchString}"
           aria-label="Add to trending" tabindex="0"
-          data-toggle-on='{"label": "Remove from trending", "content": "trending_up"}'
-          data-toggle-off='{"label": "Add to trending", "content": "trending_down"}'
+          data-toggle-on='{"label": "Remove from trending", "content": "vertical_align_bottom"}'
+          data-toggle-off='{"label": "Add to trending", "content": "vertical_align_top"}'
           @MDCIconToggle:change="doSearchFromHeadChangeEvent">
-          trending_up
+          vertical_align_bottom
         </i>
       </div>
     </div>
@@ -95,8 +95,6 @@
 </template>
 
 <script>
-// import {MDCTab, MDCTabFoundation} from '@material/tabs'
-// import {MDCTabBar, MDCTabBarFoundation} from '@material/tabs'
 import {MDCTextfield} from '@material/textfield'
 import {MDCTabBarScroller} from '@material/tabs'
 import {MDCIconToggle} from '@material/icon-toggle'
@@ -120,7 +118,7 @@ export default {
       searchString: '',
       searchDateFrom: null,
       searchDateTo: null,
-      searchFromHead: true,
+      searchFromHead: false,
       displayTimestamp: true,
       currentLog: this.selectedLogs[0].logStreamId,
       currentLogGroupName: this.selectedLogs[0].logGroupName,
@@ -160,7 +158,6 @@ export default {
       this.currentLogStreamName = log.logStreamName
     },
     doDisplayTimestampChangeEvent: function (event) {
-      console.log('hoge')
       this.displayTimestamp = event.detail.isOn
     },
     doSearchFromHeadChangeEvent: function (event) {
@@ -168,9 +165,6 @@ export default {
     }
   },
   watch: {
-    searchDateFrom: function (val) {
-      console.log(this.searchDateFrom)
-    }
   }
 }
 </script>
