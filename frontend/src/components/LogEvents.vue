@@ -98,11 +98,15 @@
 import {MDCTextfield} from '@material/textfield'
 import {MDCTabBarScroller} from '@material/tabs'
 import {MDCIconToggle} from '@material/icon-toggle'
-import LogEvent from './LogEvent'
-import DateTimePicker from './common/DateTimePicker'
+import Base from '@/components/Base'
+import LogEvent from '@/components/LogEvent'
+import DateTimePicker from '@/components/common/DateTimePicker'
 
 export default {
   name: 'LogEvents',
+  mixins: [
+    Base
+  ],
   components: {
     LogEvent,
     DateTimePicker

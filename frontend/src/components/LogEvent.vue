@@ -20,9 +20,13 @@
 
 <script>
 import axios from 'axios'
+import Base from '@/components/Base'
 
 export default {
   name: 'LogEvents',
+  mixins: [
+    Base
+  ],
   props: {
     awsRegion: {
       type: String,
@@ -71,9 +75,6 @@ export default {
       }
       this.isLoading = true
       const { res, error } = await axios.get('/api/logevents', {
-        headers: {
-          'X-ServiceToken': `Logs ${localStorage.getItem('token') || ''}`
-        },
         params: Object.assign({
           awsRegion: this.awsRegion,
           logStreamName: this.logStreamName,
@@ -131,24 +132,6 @@ export default {
         })
       }
       this.currentScrollTop = event.target.scrollTop
-    },
-    dateToString (val) {
-      const date = new Date(val)
-      const toDoubleDigits = function (num) {
-        num += ''
-        if (num.length === 1) {
-          num = '0' + num
-        }
-        return num
-      }
-      const yyyy = date.getFullYear()
-      const mm = toDoubleDigits(date.getMonth() + 1)
-      const dd = toDoubleDigits(date.getDate())
-      const hh = toDoubleDigits(date.getHours())
-      const mi = toDoubleDigits(date.getMinutes())
-      const ss = toDoubleDigits(date.getSeconds())
-      const sss = date.getMilliseconds()
-      return `${yyyy}/${mm}/${dd} ${hh}:${mi}:${ss}.${sss} `
     },
     clear () {
       this.events = []

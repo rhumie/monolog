@@ -65,8 +65,9 @@
 <script>
 import axios from 'axios'
 import { MDCTextfield } from '@material/textfield'
-import SelectMenuAwsRegion from './common/SelectMenuAwsRegion'
-import DateTimePicker from './common/DateTimePicker'
+import SelectMenuAwsRegion from '@/components/common/SelectMenuAwsRegion'
+import DateTimePicker from '@/components/common/DateTimePicker'
+import Base from '@/components/Base'
 
 export default {
   name: 'LogIndex',
@@ -74,6 +75,9 @@ export default {
     SelectMenuAwsRegion,
     DateTimePicker
   },
+  mixins: [
+    Base
+  ],
   props: {
     selectedLogs: {
       type: Array,
@@ -95,9 +99,6 @@ export default {
     async searchLogs () {
       this.isLoading = true
       const { res, error } = await axios.get('/api/logs', {
-        headers: {
-          'X-ServiceToken': `Logs ${localStorage.getItem('token') || ''}`
-        },
         params: {
           awsRegion: this.searchAWSRegion
         }
@@ -124,23 +125,6 @@ export default {
         logStreamName: logStream.name,
         logStreamId: logStream.id
       })
-    },
-    dateToString (val) {
-      const date = new Date(val)
-      const toDoubleDigits = function (num) {
-        num += ''
-        if (num.length === 1) {
-          num = '0' + num
-        }
-        return num
-      }
-      const yyyy = date.getFullYear()
-      const mm = toDoubleDigits(date.getMonth() + 1)
-      const dd = toDoubleDigits(date.getDate())
-      const hh = toDoubleDigits(date.getHours())
-      const mi = toDoubleDigits(date.getMinutes())
-      const ss = toDoubleDigits(date.getSeconds())
-      return `${yyyy}/${mm}/${dd} ${hh}:${mi}:${ss}`
     }
   },
   computed: {

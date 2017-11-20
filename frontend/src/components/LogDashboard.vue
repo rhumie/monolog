@@ -22,11 +22,15 @@
 </template>
 
 <script>
-import LogIndex from './LogIndex'
-import LogEvents from './LogEvents'
+import Base from '@/components/Base'
+import LogIndex from '@/components/LogIndex'
+import LogEvents from '@/components/LogEvents'
 
 export default {
   name: 'LogDashboard',
+  mixins: [
+    Base
+  ],
   props: {},
   components: {
     LogIndex,

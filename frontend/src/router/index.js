@@ -1,7 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import axios from 'axios'
-
 import Login from '@/components/Login'
 import LogDashboard from '@/components/LogDashboard'
 
@@ -18,14 +16,4 @@ export default new Router({
     name: 'Login',
     component: Login
   }]
-})
-
-axios.interceptors.response.use((response) => {
-  return Promise.resolve({
-    res: response
-  })
-}, (error) => {
-  return Promise.resolve({
-    error: error.response
-  })
 })
